@@ -1,0 +1,95 @@
+
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+
+        
+            <div id="app">
+             <form action="#">
+                     <label for="prop">Ordenar Por:</label>
+            <select name="propiedades" id="prop">
+                     <option value="rank">Rank</option>
+                     <option value="supply">supply</option>
+                     <option value="maxSupply">maxSupply</option>
+                     <option value="marketCapUsd">marketCapUsd</option>
+                     
+             </select>
+             <button type="button" class="btn btn-success" v-on:click="ordenarPorSelect()">Ordenar por seleccion</button>
+            </form>
+
+
+
+
+        <button type="button" class="btn btn-success" v-on:click="ordenarPorPercent()">Ordenar por Percent</button>
+        <ul>
+        <li  v-for="(item, index) in monedas " v-bind:class="item.changePercent24Hr > 0 ? 'green' : item.changePercent24Hr < 0 ? 'red' : 'black' ">
+        </p>
+            Nombre : {{item.id}}<br>
+            changePercent24Hr : {{item.changePercent24Hr}}<br>
+            Rank : {{item.rank}}<br>
+            supply : {{item.supply}}<br>
+            maxSupply : {{item.maxSupply}}<br>
+            marketCapUsd : {{item.marketCapUsd}}<br>
+        </li>
+        </ul>
+
+    </div>
+        
+    
+</body>
+<style>
+    .green{
+        color: green;
+    }
+    .red{
+        color: red;
+    }
+    .black{
+        color:#000;
+    }
+</style>
+
+
+
+<script>
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            monedas : []
+        },
+        methods: {
+            ordenarPorPercent(){
+                this.monedas.sort((x, y) => x.changePercent24Hr - y.changePercent24Hr);
+            },
+            ordenarPorSelect(){
+                var select = document.getElementById('prop').value;
+                if(select == 'rank'){
+                    this.monedas.sort((x, y) => x.rank - y.rank);
+                }else if(select == 'supply'){
+                    this.monedas.sort((x, y) => x.supply - y.supply);
+                }else if(select == 'maxSupply'){
+                    this.monedas.sort((x, y) => x.maxSupply - y.maxSupply);
+                }else if(select == 'marketCapUsd'){
+                    this.monedas.sort((x, y) => x.marketCapUsd - y.marketCapUsd);
+                }
+            },
+            
+            
+        },
+       
+        created: async function () {
+            let coins = []
+            const resultado = await fetch('https://api.coincap.io/v2/assets/');                
+            coins = await resultado.json();
+            this.monedas = coins.data
+            console.log(this.monedas);
+        }
+    })
+</script>
+
+</html>
